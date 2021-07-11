@@ -1,11 +1,5 @@
-import { MyComponent } from "./components/MyComponent";
-
 function App() {
-  return (
-    <div className="App">
-      <MyComponent />
-    </div>
-  );
+  return <div className="App">asdas</div>;
 }
 
 export default App;
