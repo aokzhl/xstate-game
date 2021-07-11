@@ -1,16 +1,41 @@
+import { FC } from "react";
 import styled from "styled-components";
-import { space } from "../../styles/space";
+import {
+  GRID_SQUARE_SIZE,
+  NUMBER_OF_GRID_COLUMNS,
+  NUMBER_OF_GRID_ROWS,
+} from "../../constants";
+import { gridCoordsList } from "../../util/gridCoordsList";
 
-export const MenuScreen = styled.section`
-  width: 100%;
-  flex-grow: 1;
+const Layout = styled.div`
+  width: ${NUMBER_OF_GRID_COLUMNS * GRID_SQUARE_SIZE}px;
+  height: ${NUMBER_OF_GRID_ROWS * GRID_SQUARE_SIZE}px;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  > *:not(:first-child) {
-    margin-top: ${space(8)};
-  }
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
+
+interface PropsType {
+  x: number;
+  y: number;
+}
+
+const GridSquare = styled.div<PropsType>`
+  width: ${GRID_SQUARE_SIZE}px;
+  height: ${GRID_SQUARE_SIZE}px;
+  background-color: red;
+  position: absolute;
+  top: ${(props) => props.y * GRID_SQUARE_SIZE}px;
+  left: ${(props) => props.x * GRID_SQUARE_SIZE}px;
+`;
+
+export const Grid: FC = ({ children }) => (
+  <Layout>
+    {gridCoordsList.map(([x, y]) => (
+      <GridSquare key={`${x}${y}`} x={x} y={y} />
+    ))}
+    {children}
+  </Layout>
+);
