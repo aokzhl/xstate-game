@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { GRID_SQUARE_SIZE } from "../../constants";
 import { space } from "../../styles/space";
+
 export enum ImageSizeType {
   Small = "Small",
   Medium = "Medium",
@@ -8,8 +9,6 @@ export enum ImageSizeType {
 }
 
 const getDimension = (size?: ImageSizeType) => {
-  console.log(size);
-
   if (size === ImageSizeType.Large) return space(20);
   if (size === ImageSizeType.Small) return space(10);
   return `${GRID_SQUARE_SIZE}px`;

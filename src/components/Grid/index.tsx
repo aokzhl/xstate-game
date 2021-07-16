@@ -25,7 +25,6 @@ interface PropsType {
 const GridSquare = styled.div<PropsType>`
   width: ${GRID_SQUARE_SIZE}px;
   height: ${GRID_SQUARE_SIZE}px;
-  background-color: red;
   position: absolute;
   top: ${(props) => props.y * GRID_SQUARE_SIZE}px;
   left: ${(props) => props.x * GRID_SQUARE_SIZE}px;
