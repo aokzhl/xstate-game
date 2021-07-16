@@ -1,7 +1,7 @@
 import { playerMachine } from "./../playerMachine/index";
 import { GameEventType, GameStateType } from "./types";
 import { createMachine } from "xstate";
-import { choose, send } from "xstate/lib/actions";
+import { choose, forwardTo, send } from "xstate/lib/actions";
 import { isEqual } from "lodash";
 import { monsterMachine } from "./../monsterMachinne/index";
 import { DOOR_COORDS, TREASURE_COORDS } from "../../constants";
@@ -46,6 +46,9 @@ export const gameMachine = createMachine<null, GameEventType, GameStateType>(
               PLAYER_MOVED: {
                 actions: `onPlayerMoved`,
               },
+              ATTACK_PLAYER: {
+                actions: "forwardToPlayer",
+              },
             },
           },
           level3: {
@@ -77,11 +80,12 @@ export const gameMachine = createMachine<null, GameEventType, GameStateType>(
           cond: `isPlayerAtDoor`,
           actions: `playerWalkedThroughDoor`,
         },
+        {
+          cond: `isMonster`,
+          actions: `forwardToMonster`,
+        },
       ]),
-      // {
-      //     cond: `isMonster`,
-      //     actions: `forwardToMonster`,
-      // },
+
       resetPlayerCoords: send("RESET_PLAYER_COORDS", {
         to: `playerActor`,
       }),
@@ -93,8 +97,13 @@ export const gameMachine = createMachine<null, GameEventType, GameStateType>(
         },
       ]),
       playerGotTreasure: send("PLAYER_GOT_TREASURE"),
+      forwardToMonster: forwardTo(`monsterActor`),
+      forwardToPlayer: forwardTo(`playerActor`),
     },
     guards: {
+      isMonster: (context, event, condMeta) => {
+        return !!condMeta.state.children.monsterActor;
+      },
       isPlayerAtDoor: (_, event) => {
         if (event.type === "PLAYER_MOVED") {
           const { coords } = event;

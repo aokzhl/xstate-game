@@ -32,9 +32,25 @@ export const playerMachine = createMachine<
           RESET_PLAYER_COORDS: {
             actions: `resetCoords`,
           },
+          ATTACK_PLAYER: {
+            actions: `reduceHealth`,
+            target: `determining`,
+          },
         },
       },
       dead: {},
+      determining: {
+        always: [
+          {
+            cond: `isHealth0`,
+            target: `dead`,
+            actions: `broadcastPlayerDied`,
+          },
+          {
+            target: `alive`,
+          },
+        ],
+      },
     },
   },
   {
@@ -57,6 +73,7 @@ export const playerMachine = createMachine<
 
         return event;
       }),
+      broadcastPlayerDied: sendParent("PLAYER_DIED"),
       move: assign<PlayerContextType, ArrowButtonClickedType>(
         (context, event) => {
           const { coords } = context;
@@ -68,6 +85,9 @@ export const playerMachine = createMachine<
           };
         }
       ) as any,
+      reduceHealth: assign<PlayerContextType>((context) => ({
+        health: context.health - 1,
+      })) as any,
     },
     guards: {
       isSquareAvailable: (
@@ -83,6 +103,11 @@ export const playerMachine = createMachine<
         }
 
         return false;
+      },
+      isHealth0: (context: PlayerContextType) => {
+        const { health } = context;
+
+        return health === 0;
       },
     },
   }

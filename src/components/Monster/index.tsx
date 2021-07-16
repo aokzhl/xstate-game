@@ -18,6 +18,7 @@ interface PropsType {
 export const Monster = ({ actor }: PropsType) => {
   // @ts-ignore
   const [state] = useActor(actor);
+
   const { coords } = state.context;
   const position = coordsToPosition(coords);
 
