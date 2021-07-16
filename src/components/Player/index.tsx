@@ -10,6 +10,16 @@ import {
 } from "../../machines/playerMachine/types";
 import { usePlayerControls } from "../../hooks/usePlayerControlls";
 import { DirectionType } from "../../types";
+import { space } from "../../styles/space";
+import { Health } from "../Health";
+
+const HealthLayout = styled.div`
+  position: absolute;
+  top: -${space(30)};
+  left: -${space(2)};
+
+  display: flex;
+`;
 
 interface LayoutPropsType {
   left: string;
@@ -29,7 +39,7 @@ interface PropsType {
 export const Player = ({ actor }: PropsType) => {
   const [state, send] = useActor(actor);
   // @ts-ignore
-  const { coords } = state.context;
+  const { coords, health } = state.context;
 
   const position = coordsToPosition(coords);
 
@@ -58,8 +68,13 @@ export const Player = ({ actor }: PropsType) => {
   });
 
   return (
-    <Layout left={position[0]} top={position[1]}>
-      <Image src={thiefGif} alt="thief" />
-    </Layout>
+    <>
+      <HealthLayout>
+        <Health health={health} />
+      </HealthLayout>
+      <Layout left={position[0]} top={position[1]}>
+        <Image src={thiefGif} alt="thief" />
+      </Layout>
+    </>
   );
 };

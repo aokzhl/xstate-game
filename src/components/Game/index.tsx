@@ -11,6 +11,9 @@ import { LevelBackgroundImage } from "../LevelBackgroundImage";
 import { useEffect } from "react";
 import { Grid } from "../Grid";
 import { Player } from "../Player";
+import { Treasure } from "../Treasure";
+import { Monster } from "../Monster";
+import { MonsterActorType } from "../../machines/monsterMachinne/types";
 
 interface PropsType {
   fastForwardEvents?: GameEventType[];
@@ -18,7 +21,7 @@ interface PropsType {
 
 export const Game = ({ fastForwardEvents }: PropsType) => {
   const [state, send] = useMachine(gameMachine);
-  const { playerActor } = state.children;
+  const { playerActor, monsterActor } = state.children;
   console.log(state);
 
   // const { monsterActor, playerActor } = state.children;
@@ -54,11 +57,9 @@ export const Game = ({ fastForwardEvents }: PropsType) => {
           <LevelBackgroundImage src={level2BackgroundPng} alt="Dungeon room" />
           <Grid>
             {playerActor && <Player actor={playerActor} />}
-            {/* {monsterActor && (
-                        <Monster
-                            actor={monsterActor as MonsterActorType}
-                        />
-                    )} */}
+            {monsterActor && (
+              <Monster actor={monsterActor as MonsterActorType} />
+            )}
           </Grid>
         </>
       );
@@ -70,7 +71,7 @@ export const Game = ({ fastForwardEvents }: PropsType) => {
           <LevelBackgroundImage src={level3BackgroundPng} alt="Dungeon room" />
           <Grid>
             {playerActor && <Player actor={playerActor} />}
-            {/* <Treasure /> */}
+            <Treasure />
           </Grid>
         </>
       );

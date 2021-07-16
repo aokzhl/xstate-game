@@ -1,6 +1,9 @@
 import { createMachine } from "xstate";
 import { assign, choose, sendParent } from "xstate/lib/actions";
-import { PLAYER_STARTING_COORDS } from "../../constants";
+import {
+  PLAYER_STARTING_COORDS,
+  PLAYER_STARTING_HEALTH,
+} from "../../constants";
 import { getTargetCoords } from "../../util/getTargetCoorsds";
 import { isCoordsOnGrid } from "../../util/isCoordsOnGrid";
 import { PlayerMovedType } from "../gameMachine/types";
@@ -17,7 +20,7 @@ export const playerMachine = createMachine<
   PlayerStateType
 >(
   {
-    context: { coords: PLAYER_STARTING_COORDS },
+    context: { coords: PLAYER_STARTING_COORDS, health: PLAYER_STARTING_HEALTH },
     id: "player",
     initial: "alive",
     states: {
