@@ -1,82 +1,84 @@
-import {isEqual} from "lodash";
-import {assign, createMachine} from "xstate";
-import {choose, log, sendParent} from "xstate/lib/actions";
-import {CoordsType} from "../../types";
-import {PlayerMovedType} from "../gameMachine/types";
+import { isEqual } from "lodash";
+import { assign, createMachine } from "xstate";
+import { choose, sendParent } from "xstate/lib/actions";
+import { CoordsType } from "../../types";
+import { PlayerMovedType } from "../gameMachine/types";
 import {
-    MonsterContextType,
-    MonsterEventsType,
-    MonsterStateType,
+  MonsterContextType,
+  MonsterEventsType,
+  MonsterStateType,
 } from "./types";
 
 const coordsList: CoordsType[] = [
-    [8, 1],
-    [8, 2],
-    [0, 3],
+  [8, 1],
+  [8, 2],
+  [0, 3],
 ];
 
-export const monsterMachine = createMachine<MonsterContextType,
-    MonsterEventsType,
-    MonsterStateType>(
-    {
-        context: {
-            coords: coordsList[0],
-            playerCoords: undefined,
-        },
-        id: `monster`,
-        initial: `up`,
-        on: {
-            PLAYER_MOVED: {
-                actions: [`storePlayerCoords`, `attemptAttack`],
-                // actions: ["storePlayerCoords"],
-            },
-        },
-        states: {
-            active: {},
-            up: {
-                entry: `attemptAttack`,
-                after: {
-                    2000: {
-                        actions: `moveDown`,
-                        target: `down`,
-                    },
-                },
-            },
-            down: {
-                entry: `attemptAttack`,
-                after: {
-                    2000: {
-                        actions: `moveUp`,
-                        target: `up`,
-                    },
-                },
-            },
-        },
+export const monsterMachine = createMachine<
+  MonsterContextType,
+  MonsterEventsType,
+  MonsterStateType
+>(
+  {
+    context: {
+      coords: coordsList[0],
+      playerCoords: undefined,
     },
-    {
-        actions: {
-            moveDown: assign<MonsterContextType>(() => ({
-                coords: coordsList[1],
-            })) as any,
-            moveUp: assign<MonsterContextType>(() => ({
-                coords: coordsList[0],
-            })) as any,
-            storePlayerCoords: assign<MonsterContextType, PlayerMovedType>(
-                (context, event) => ({
-                    playerCoords: event.coords,
-                })
-            ),
-            attemptAttack: choose([
-                {
-                    actions: `attack`,
-                    cond: `isMonsterPlayerCoordsEqual`,
-                },
-            ]),
-            attack: sendParent("ATTACK_PLAYER"),
+    id: `monster`,
+    initial: `up`,
+    on: {
+      PLAYER_MOVED: {
+        actions: [`storePlayerCoords`, `attemptAttack`],
+        // actions: ["storePlayerCoords"],
+      },
+    },
+    states: {
+      active: {},
+      up: {
+        entry: `attemptAttack`,
+        after: {
+          2000: {
+            actions: `moveDown`,
+            target: `down`,
+          },
         },
-        guards: {
-            isMonsterPlayerCoordsEqual: (context, event) =>
-                isEqual(context.coords, context.playerCoords),
+      },
+      down: {
+        entry: `attemptAttack`,
+        after: {
+          2000: {
+            actions: `moveUp`,
+            target: `up`,
+          },
         },
-    }
+      },
+    },
+  },
+  {
+    actions: {
+      moveDown: assign<MonsterContextType>(() => ({
+        coords: coordsList[1],
+      })) as any,
+      moveUp: assign<MonsterContextType>(() => ({
+        coords: coordsList[0],
+      })) as any,
+      storePlayerCoords: assign<MonsterContextType, PlayerMovedType>(
+        (context, event) => ({
+          playerCoords: event.coords,
+        })
+      ),
+      attemptAttack: choose([
+        {
+          actions: `attack`,
+          cond: `isMonsterPlayerCoordsEqual`,
+        },
+      ]),
+      attack: sendParent("ATTACK_PLAYER"),
+    },
+    guards: {
+      isMonsterPlayerCoordsEqual: (context, event) =>
+        isEqual(context.coords, context.playerCoords),
+    },
+  }
 );

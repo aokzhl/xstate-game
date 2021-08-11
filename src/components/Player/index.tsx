@@ -4,10 +4,7 @@ import thiefGif from "../../images/thief.gif";
 import { Image } from "../Image";
 import styled from "styled-components";
 import { coordsToPosition } from "../../util/coordsToPosition";
-import {
-  ArrowButtonClickedType,
-  PlayerActorType,
-} from "../../machines/playerMachine/types";
+import { ArrowButtonClickedType } from "../../machines/playerMachine/types";
 import { usePlayerControls } from "../../hooks/usePlayerControlls";
 import { DirectionType } from "../../types";
 import { space } from "../../styles/space";
